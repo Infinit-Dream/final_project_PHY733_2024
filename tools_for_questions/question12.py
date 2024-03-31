@@ -7,12 +7,12 @@ Contents:
 Contains the code for the question #12 and the following bonus question labelled 
 question #12.5 of the project. 
 
-Question #12:
-    In question #12, we wished to estimate the mean
-    of P_heavy (computed with the function of question #8) for a circuit with 10 
-    qubits and 5 layers of circuit. 
+- Question #12:
+    In question #12, we wished to estimate the mean of P_heavy (computed with 
+    the function of question #8) for a circuit with 10 qubits and 5 layers of 
+    circuit. 
 
-Question #12.5:
+- Question #12.5:
     In question #12.5, we wished to caracterise the mean of P_heavy for circuits 
     with different numbers of qubits and layers.
 """
@@ -48,9 +48,10 @@ def multiply_layers_qtm_circ(
     ) -> QuantumCircuit:
     """DOCS
     """
+    init_qtm_circ = qtm_circ_single_layer
     qtm_circ_to_update = qtm_circ_single_layer
-    for _ in range(nbr_layers):
-        qtm_circ_to_update = qtm_circ_to_update.compose(qtm_circ_to_update)
+    for _ in range(nbr_layers - 1):
+        qtm_circ_to_update = qtm_circ_to_update.compose(init_qtm_circ)
     return  qtm_circ_to_update
 
 
@@ -92,7 +93,7 @@ def compute_mean_P_heavy(
     for _ in range(nbr_sim):
         qtm_circ = qtm_circ_single_layer(nbr_qubits)
         mult_layers_qtm_circ = multiply_layers_qtm_circ(nbr_layers, qtm_circ)
-        pjs = q8.compute_pjs_one_rand_circ(nbr_qubits, mult_layers_qtm_circ)
+        pjs = q8.compute_pjs_one_rand_circ(mult_layers_qtm_circ)[0]
         p_heavys.append(q8.compute_P_heavy(pjs, False))
         if (_ % 5000 == 0) & (_ != 0):
             print(f"Simulation number {_} done.")

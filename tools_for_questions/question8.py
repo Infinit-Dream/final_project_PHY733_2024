@@ -17,15 +17,17 @@ import tools_for_questions.question7 as q7
 from rich import print
 
 
-def compute_pjs_one_rand_circ(
-        number_qubits: int, 
-        rand_qtm_circuit: QuantumCircuit
-    ) -> np.ndarray:
+def compute_pjs_one_rand_circ(rand_qtm_circuit: QuantumCircuit) -> np.ndarray:
     """DOCS
     """
-    state_before_circuit = Statevector.from_int(0, 2**number_qubits)
+    state_before_circuit = Statevector.from_int(
+        0, 
+        2**(rand_qtm_circuit.num_qubits)
+    )
     state_after_circuit = state_before_circuit.evolve(rand_qtm_circuit)
-    return list(state_after_circuit.probabilities_dict().values())
+    list_prob_res = list(state_after_circuit.probabilities_dict().values())
+    dict_prob_res = state_after_circuit.probabilities_dict()
+    return [list_prob_res, dict_prob_res]
 
 
 def compute_P_heavy(list_pj: list, print_bool: bool = True) -> float:
@@ -48,7 +50,7 @@ def run_q8(params: dict) -> None:
         params["n_q8"]
     )
     P_heavy = compute_P_heavy(
-        compute_pjs_one_rand_circ(params["n_q8"], rand_n_qubit_qtm_circ),
+        compute_pjs_one_rand_circ(rand_n_qubit_qtm_circ)[0],
         True
     )
     print("\n Question #8 done. \n")
