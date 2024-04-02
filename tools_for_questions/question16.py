@@ -127,7 +127,8 @@ def estimate_mean_P_heavy(
     all_qtm_circ = generate_all_qtm_circ(nbr_circ, nbr_qubits, nbr_layers)
     print(f"All {nbr_circ} quantum circuits generated!")
     p_meds, prob_dicts, job_results = run_job(
-        token, qtm_computer, 
+        token, 
+        qtm_computer, 
         nbr_tirages, 
         all_qtm_circ
     )
@@ -150,8 +151,9 @@ def estimate_mean_P_heavy(
 
     print(
         f"The classical estimation for the mean of P_heavy is " + 
-        f"{class_mean_P_heavy:.4f} with variance {class_var_P_heavy:.4f} " + 
-        f"and the quantum estimation is {qtm_mean_P_heavy:.4f}. \n"
+        f"{class_mean_P_heavy:.5f} with variance {class_var_P_heavy:.5f} " + 
+        f"and the quantum estimation is {qtm_mean_P_heavy:.5f} with quantum " + 
+        f"computer {qtm_computer}. \n"
     )
 
     return class_mean_P_heavy, class_var_P_heavy, qtm_mean_P_heavy
@@ -194,7 +196,7 @@ def plot_caract_mean_P_heavy(
         markersize = 8,
         color = "#7e374e"
     )
-    plt.xlabel(r"Nombre de couches pour le circuit")
+    plt.xlabel(r"Nombre de couches pour le circuit $c$")
     plt.ylabel(r"$\bar{P}_{heavy}$")
     plt.savefig(
         f"{os.path.abspath(os.getcwd())}/figures/question16_figs/" + 
@@ -216,9 +218,6 @@ def run_q16(params: dict) -> None:
         params["c_q16"]
     )
     print("\n Question #16 done. \n")
-    file1 = open(f'mean_P_heavy_{params["N_tirages_q16"]}.txt', 'w')
-    file1.writelines(str(mean_P_heavy_quantities[2]))
-    file1.close()
     return
 
 
@@ -232,7 +231,8 @@ def run_q16_5_bonus(params: dict) -> None:
         params["quantum_computer"],
         params["N_circuits_q16_5_bonus"],
         params["N_tirages_q16_5_bonus"],
-        params["n_q16_5_bonus"])
+        params["n_q16_5_bonus"]
+    )
     plot_caract_mean_P_heavy(params["max_c_q16_5_bonus"], all_mean_P_heavys)
     print("\n Question #16.5 done. \n")
     return

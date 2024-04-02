@@ -95,7 +95,7 @@ def compute_mean_P_heavy(
         mult_layers_qtm_circ = multiply_layers_qtm_circ(nbr_layers, qtm_circ)
         pjs = q8.compute_pjs_one_rand_circ(mult_layers_qtm_circ)[0]
         p_heavys.append(q8.compute_P_heavy(pjs, False))
-        if (_ % 5000 == 0) & (_ != 0):
+        if (_ % 1000 == 0) & (_ != 0):
             print(f"Simulation number {_} done.")
     
     mean_p_heavy = np.mean(p_heavys)
@@ -151,8 +151,8 @@ def color_plot(
     axes.axis(
         [qubit_grid.min(), qubit_grid.max(), layer_grid.min(), layer_grid.max()]
     )
-    axes.set_xlabel("Number of qubits")
-    axes.set_ylabel("Number of circuit layers")    
+    axes.set_xlabel(r"Nombres de qubits $n$")
+    axes.set_ylabel(r"Nombre de couches pour le circuit $c$")    
     figure.tight_layout()
     plt.savefig(
         f"{os.path.abspath(os.getcwd())}/figures/question12_figs/" + 

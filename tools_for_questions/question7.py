@@ -108,7 +108,7 @@ def histo_plot(all_z_values: list) -> None:
     """
     plt.hist(all_z_values, bins = 20, color = "#7e374e")
     plt.xlabel(r"$z = \langle Z \rangle$")
-    plt.ylabel("Counts")
+    plt.ylabel("Comptes")
     plt.savefig(
         f"{os.path.abspath(os.getcwd())}/figures/question7_figs/" + 
         "question7_histo.png"

@@ -53,31 +53,33 @@ params_q7 = {
     "phi_range_q7": (0, np.pi),
     "theta_range_q7": (0, 2 * np.pi),
     "n_q7": 1,
-    "N_q7": 100000
+    "N_q7": 200000
 }
 
-params_q8 = {"n_q8": 4}
+params_q8 = {
+    "n_q8": 4
+}
 
 params_q12 = {
     "n_q12": 10,
-    "max_n_q12_5_bonus": 10,
+    "max_n_q12_5_bonus": 12,
     "N_q12": 10000,
-    "N_q12_5_bonus": 100,
+    "N_q12_5_bonus": 500,
     "c_q12": 5,
-    "max_c_q12_5_bonus": 5
+    "max_c_q12_5_bonus": 8
 }
 
 params_q16 = {
     "n_q16": 10,
-    "n_q16_5_bonus": 6,
-    "N_circuits_q16": 1,
-    "N_circuits_q16_5_bonus": 5,
-    "N_tirages_q16": 10000,
+    "n_q16_5_bonus": 10,
+    "N_circuits_q16": 100,
+    "N_circuits_q16_5_bonus": 500,
+    "N_tirages_q16": 20000,
     "N_tirages_q16_5_bonus": 1000,
     "c_q16": 5,
     "max_c_q16_5_bonus": 5,
     "personnal_token": "insert_here",
-    "quantum_computer": "ibm_osaka"
+    "quantum_computer": "ibmq_qasm_simulator"
 }
 
 ####################################
