@@ -220,7 +220,7 @@ def caracterise_mean_P_heavy(
             generated_noise
         )
         all_mean_qtm_P_heavys.append(temp_mean_P_heavy[2])
-        all_mean_class_P_heavys.append(temp_mean_P_heavy[1])
+        all_mean_class_P_heavys.append(temp_mean_P_heavy[0])
     return all_mean_qtm_P_heavys, all_mean_class_P_heavys
 
 
@@ -247,8 +247,16 @@ def plot_caract_mean_P_heavy(
         color = "#e3024d",
         label = r"Sachant les $\{p_j\}$"
     )
+    plt.yticks(
+        [0.5, 0.6, 2 / 3, 0.7, 0.8, 0.9, 1], 
+        ["0.5", "0.6", "2 / 3", "0.7", "0.8", "0.9", "1"]
+    )
+    plt.hlines(2 / 3, 0, max_circ_layers + 1, color = "k", ls = "--")
     plt.xlabel(r"Nombre de couches pour le circuit $c$")
     plt.ylabel(r"$\bar{P}_{heavy}$")
+    plt.xlim(0.95, max_circ_layers + 0.05)
+    plt.ylim(0.5, 1)
+    plt.legend()
     plt.savefig(
         f"{os.path.abspath(os.getcwd())}/figures/question16_figs/" + 
         "question16_caract.png"
@@ -289,7 +297,7 @@ def run_q16_5_bonus(params: dict) -> None:
     else:
         params["with_noise_or_not"] = False
 
-    all_mean_P_heavys = caracterise_mean_P_heavy(
+    all_mean_qtm_P_heavys, all_mean_class_P_heavys = caracterise_mean_P_heavy(
         params["max_c_q16_5_bonus"],
         params["personnal_token"], 
         params["quantum_computer"],
@@ -298,7 +306,11 @@ def run_q16_5_bonus(params: dict) -> None:
         params["n_q16_5_bonus"],
         params["with_noise_or_not"]
     )
-    plot_caract_mean_P_heavy(params["max_c_q16_5_bonus"], all_mean_P_heavys)
+    plot_caract_mean_P_heavy(
+        params["max_c_q16_5_bonus"], 
+        all_mean_qtm_P_heavys, 
+        all_mean_class_P_heavys
+    )
     print("\n Question #16.5 done. \n")
     return
 
