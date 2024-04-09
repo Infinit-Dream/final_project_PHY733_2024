@@ -78,7 +78,7 @@ params_q16 = {
     "N_tirages_q16_5_bonus": 20000,
     "c_q16": 1,
     "max_c_q16_5_bonus": 5,
-    "personnal_token": "6e441fa125c3db3896e0ad445373aaf0f647bf114bae706c949bb4a8690b2e722353157df118faf514a1178cba55fcfb47fdf2833f8cfd5f313c28ba7d1a6085",
+    "personnal_token": "insert_here",
     "quantum_computer": "ibmq_qasm_simulator"
 }
 
