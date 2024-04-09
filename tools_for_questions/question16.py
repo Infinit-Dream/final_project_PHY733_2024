@@ -22,8 +22,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from qiskit import transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2, SamplerOptions
+from qiskit_ibm_runtime import QiskitRuntimeService
+from qiskit_ibm_runtime import SamplerV2, SamplerOptions, Sampler, Options
 from qiskit.providers.backend import BackendV2
+from qiskit_aer.noise import NoiseModel
 import tools_for_questions.question8 as q8
 import tools_for_questions.question12 as q12
 from rich import print
@@ -36,7 +38,8 @@ def run_job(
         token: str, 
         qtm_computer: str, 
         nbr_tirages: int, 
-        all_qtm_circs: list
+        all_qtm_circs: list,
+        generated_noise: bool
     ) -> tuple:
     """DOCS
     """
@@ -45,16 +48,48 @@ def run_job(
         token = token
     )
     backend = service.backend(qtm_computer)
-    print(f"Quantum computer {backend.name} ready!")
-    sampler = SamplerV2(
-        backend,
-        options = SamplerOptions(default_shots = nbr_tirages)
-    )
-    print("All jobs sent!")
-    job = sampler.run(transpile_all_qtm_circ(all_qtm_circs, backend))
-    job_results = [
-        pub_result.data.meas.get_counts() for pub_result in job.result()
-    ]
+    backend_noise_reference = service.backend("ibm_brisbane")
+
+
+    if generated_noise == True:
+        print("Running with noise model from ibm_brisbane quantum computer.")
+        noise_model = NoiseModel.from_backend(backend_noise_reference)
+        options = Options()
+        options.simulator = {
+            "noise_model": noise_model,
+            "basis_gates": backend_noise_reference.configuration().basis_gates
+        }
+        options.execution.shots = nbr_tirages
+        options.optimization_level = 1
+
+        print(f"Quantum computer {backend.name} ready!\n")
+        sampler = Sampler(
+            backend,
+            options = options
+        )
+        job = sampler.run(all_qtm_circs)
+        quasi_job_results = [
+            i.nearest_probability_distribution().binary_probabilities() 
+            for i in job.result().quasi_dists
+        ]
+        job_results = []
+        for res_dict in quasi_job_results:
+            res_dict.update(
+                (state, int(prob * nbr_tirages)) # Approximately good enough
+                for state, prob in res_dict.items()
+            )
+            job_results.append(res_dict)
+
+    else:
+        print(f"Quantum computer {backend.name} ready!\n")
+        sampler = SamplerV2(
+            backend,
+            options = SamplerOptions(default_shots = nbr_tirages)
+        )
+        job = sampler.run(transpile_all_qtm_circ(all_qtm_circs, backend))
+        job_results = [
+            pub_result.data.meas.get_counts() for pub_result in job.result()
+        ]
 
     classic_pjs = [
         q8.compute_pjs_one_rand_circ(
@@ -120,7 +155,8 @@ def estimate_mean_P_heavy(
         nbr_circ: int, 
         nbr_tirages: int, 
         nbr_qubits: int, 
-        nbr_layers: int
+        nbr_layers: int,
+        generated_noise: bool
     ) -> float:
     """DOCS
     """
@@ -130,7 +166,8 @@ def estimate_mean_P_heavy(
         token, 
         qtm_computer, 
         nbr_tirages, 
-        all_qtm_circ
+        all_qtm_circ,
+        generated_noise
     )
     print("Job done!")
 
@@ -165,10 +202,12 @@ def caracterise_mean_P_heavy(
         qtm_computer: str,
         nbr_circ: int, 
         nbr_tirages: int, 
-        nbr_qubits: int) -> list:
+        nbr_qubits: int,
+        generated_noise: bool
+    ) -> list:
     """DOCS
     """
-    all_mean_P_heavys = []
+    all_mean_qtm_P_heavys, all_mean_class_P_heavys = [], []
     for nbr_layers in range(1, max_circ_layers + 1):
         print(f"Now running circuit with {nbr_layers} layers.")
         temp_mean_P_heavy = estimate_mean_P_heavy(
@@ -177,24 +216,36 @@ def caracterise_mean_P_heavy(
             nbr_circ, 
             nbr_tirages, 
             nbr_qubits, 
-            nbr_layers
+            nbr_layers,
+            generated_noise
         )
-        all_mean_P_heavys.append(temp_mean_P_heavy[2])
-    return all_mean_P_heavys
+        all_mean_qtm_P_heavys.append(temp_mean_P_heavy[2])
+        all_mean_class_P_heavys.append(temp_mean_P_heavy[1])
+    return all_mean_qtm_P_heavys, all_mean_class_P_heavys
 
 
 def plot_caract_mean_P_heavy(
         max_circ_layers: int, 
-        all_mean_P_heavys: list
+        all_mean_qtm_P_heavys: list,
+        all_mean_class_P_heavys: list
     ) -> None:
     """DOCS
     """
     plt.plot(
         range(1, max_circ_layers + 1), 
-        all_mean_P_heavys, 
+        all_mean_qtm_P_heavys, 
         ".-",
         markersize = 8,
-        color = "#7e374e"
+        color = "#7e374e",
+        label = r"Machine réelle"
+    )
+    plt.plot(
+        range(1, max_circ_layers + 1), 
+        all_mean_class_P_heavys, 
+        ".-",
+        markersize = 8,
+        color = "#e3024d",
+        label = r"Sachant les $\{p_j\}$"
     )
     plt.xlabel(r"Nombre de couches pour le circuit $c$")
     plt.ylabel(r"$\bar{P}_{heavy}$")
@@ -209,13 +260,20 @@ def run_q16(params: dict) -> None:
     """DOCS
     """
     print("\n Currently running question #16: \n")
+
+    if params["quantum_computer"] == "ibmq_qasm_simulator":
+        params["with_noise_or_not"] = True
+    else:
+        params["with_noise_or_not"] = False
+
     mean_P_heavy_quantities = estimate_mean_P_heavy(
         params["personnal_token"], 
         params["quantum_computer"],
         params["N_circuits_q16"],
         params["N_tirages_q16"],
         params["n_q16"],
-        params["c_q16"]
+        params["c_q16"],
+        params["with_noise_or_not"]
     )
     print("\n Question #16 done. \n")
     return
@@ -225,13 +283,20 @@ def run_q16_5_bonus(params: dict) -> None:
     """DOCS
     """
     print("\n Currently running question #16.5: \n")
+
+    if params["quantum_computer"] == "ibmq_qasm_simulator":
+        params["with_noise_or_not"] = True
+    else:
+        params["with_noise_or_not"] = False
+
     all_mean_P_heavys = caracterise_mean_P_heavy(
         params["max_c_q16_5_bonus"],
         params["personnal_token"], 
         params["quantum_computer"],
         params["N_circuits_q16_5_bonus"],
         params["N_tirages_q16_5_bonus"],
-        params["n_q16_5_bonus"]
+        params["n_q16_5_bonus"],
+        params["with_noise_or_not"]
     )
     plot_caract_mean_P_heavy(params["max_c_q16_5_bonus"], all_mean_P_heavys)
     print("\n Question #16.5 done. \n")

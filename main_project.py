@@ -70,15 +70,15 @@ params_q12 = {
 }
 
 params_q16 = {
-    "n_q16": 10,
+    "n_q16": 6,
     "n_q16_5_bonus": 10,
-    "N_circuits_q16": 100,
-    "N_circuits_q16_5_bonus": 500,
-    "N_tirages_q16": 20000,
-    "N_tirages_q16_5_bonus": 1000,
-    "c_q16": 5,
+    "N_circuits_q16": 1,
+    "N_circuits_q16_5_bonus": 50,
+    "N_tirages_q16": 10000,
+    "N_tirages_q16_5_bonus": 20000,
+    "c_q16": 1,
     "max_c_q16_5_bonus": 5,
-    "personnal_token": "insert_here",
+    "personnal_token": "6e441fa125c3db3896e0ad445373aaf0f647bf114bae706c949bb4a8690b2e722353157df118faf514a1178cba55fcfb47fdf2833f8cfd5f313c28ba7d1a6085",
     "quantum_computer": "ibmq_qasm_simulator"
 }
 
@@ -99,8 +99,8 @@ if __name__ == "__main__":
     # # Question 12.5 (bonus):
     # q12.run_q12_5_bonus(params_q12)
 
-    # Question 16:
-    q16.run_q16(params_q16)
+    # # Question 16:
+    # q16.run_q16(params_q16)
 
-    # # Question 16.5 (bonus):
-    # q16.run_q16_5_bonus(params_q16)
+    # Question 16.5 (bonus):
+    q16.run_q16_5_bonus(params_q16)
