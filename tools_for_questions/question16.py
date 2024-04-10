@@ -249,7 +249,7 @@ def plot_caract_mean_P_heavy(
     )
     plt.yticks(
         [0.5, 0.6, 2 / 3, 0.7, 0.8, 0.9, 1], 
-        ["0.5", "0.6", "2 / 3", "0.7", "0.8", "0.9", "1"]
+        ["0.5", "0.6", "2/3", "0.7", "0.8", "0.9", "1"]
     )
     plt.hlines(2 / 3, 0, max_circ_layers + 1, color = "k", ls = "--")
     plt.xlabel(r"Nombre de couches pour le circuit $c$")

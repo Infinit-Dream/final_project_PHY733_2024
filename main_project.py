@@ -70,14 +70,14 @@ params_q12 = {
 }
 
 params_q16 = {
-    "n_q16": 6,
+    "n_q16": 10,
     "n_q16_5_bonus": 10,
-    "N_circuits_q16": 1,
-    "N_circuits_q16_5_bonus": 50,
-    "N_tirages_q16": 10000,
-    "N_tirages_q16_5_bonus": 20000,
-    "c_q16": 1,
-    "max_c_q16_5_bonus": 5,
+    "N_circuits_q16": 25,
+    "N_circuits_q16_5_bonus": 25,
+    "N_tirages_q16": 15000,
+    "N_tirages_q16_5_bonus": 15000,
+    "c_q16": 5,
+    "max_c_q16_5_bonus": 10,
     "personnal_token": "insert_here",
     "quantum_computer": "ibmq_qasm_simulator"
 }
@@ -87,20 +87,21 @@ params_q16 = {
 ####################################
 
 if __name__ == "__main__":
-    # # Question 7:
-    # q7.run_q7(params_q7)
+    # Simply comment out the sections you don't wish to run
+    # Question 7:
+    q7.run_q7(params_q7)
 
-    # # Question 8:
-    # q8.run_q8(params_q8)
+    # Question 8:
+    q8.run_q8(params_q8)
 
-    # # Question 12:
-    # q12.run_q12(params_q12)
+    # Question 12:
+    q12.run_q12(params_q12)
 
-    # # Question 12.5 (bonus):
-    # q12.run_q12_5_bonus(params_q12)
+    # Question 12.5 (bonus):
+    q12.run_q12_5_bonus(params_q12)
 
-    # # Question 16:
-    # q16.run_q16(params_q16)
+    # Question 16:
+    q16.run_q16(params_q16)
 
     # Question 16.5 (bonus):
     q16.run_q16_5_bonus(params_q16)
